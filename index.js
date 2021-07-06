@@ -1,8 +1,9 @@
 const express = require("express");
-const app = express();
+const { resolve } = require("path");
 
-app.get("/", (_, res) => {
-  res.sendFile("public/install.sh", { root: __dirname });
-});
+const app = express();
+const install = resolve("public/install.sh");
+
+app.get("/", (_, res) => res.sendFile(install));
 
 module.exports = app;
