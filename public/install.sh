@@ -27,14 +27,14 @@ FETCHING="Fetching 'please' from GitHub"
 GH_RELEASES="https://api.github.com/repos/pleasecmd/please/releases"
 
 # Check if we're on Alpine Linux
-check_not_alpine() {
+check_alpine() {
   RESULT=$(cat /etc/os-release | grep "NAME=" | grep -ic "Alpine")
   return $?
 }
 
 # Get OS class, or unknown
 get_os() {
-  if ! $(check_not_alpine); then
+  if [ "$(check_alpine)" = "0" ]; then
     echo "alpine"
   elif [ "$(uname)" = "Darwin" ]; then
     echo "macos"
@@ -59,7 +59,7 @@ get_arch() {
 
 # Check if the script is running as root
 check_root() {
-  if [ "$EUID" -ne 0 ]; then
+  if ! [ "$EUID" = "0" ]; then
     echo "$NO_ROOT"
   fi
 }
@@ -73,7 +73,7 @@ spinner() {
       break
     }
     i=0
-    while [ "$i" -ne 9 ]; do
+    while ! [ "$i" = "9" ]; do
       i=$(($i+1))
       sleep 0.05
       printf "${CL}${SPINNER:$i:1} ${msg}\r"
@@ -117,7 +117,7 @@ pack_install() {
   fi
 
   # Download the latest release from GitHub, display an error on failure
-  URL="https://get.please.devz/$LATEST/$OS/$ARCH"
+  URL="https://get.please.dev/$LATEST/$OS/$ARCH"
   fetch_payload "$URL" & spinner "$FETCHING"
   FAILED=$?
   if [ $FAILED ]; then
