@@ -71,7 +71,9 @@ spinner() {
       printf "${CL}"
       break
     }
-    for (( i=0; i<${#SPINNER}; i++ )); do
+    i=0
+    while [ "$i" -ne 9 ]; do
+      i=$(($i+1))
       sleep 0.05
       printf "${CL}${SPINNER:$i:1} ${msg}\r"
     done
