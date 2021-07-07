@@ -122,7 +122,7 @@ pack_install() {
   URL="https://get.please.dev/$LATEST/$OS/$ARCH"
   fetch_release "$URL" & spinner "$FETCHING"
   RETCODE=$?
-  if [ "$RETCODE" = "0" ]; then
+  if ! [ "$RETCODE" = "0" ]; then
     echo $CANNOT_FETCH
     exit 1
   fi
