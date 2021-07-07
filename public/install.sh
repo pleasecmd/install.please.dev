@@ -27,17 +27,18 @@ FETCHING="Fetching 'please' from GitHub"
 GH_RELEASES="https://api.github.com/repos/pleasecmd/please/releases"
 
 # Check if we're on Alpine Linux
-check_alpine() {
-  return ! $(cat /etc/os-release | grep "NAME=" | grep -ic "Alpine")
+check_not_alpine() {
+  RESULT=$(cat /etc/os-release | grep "NAME=" | grep -ic "Alpine")
+  return $?
 }
 
 # Get OS class, or unknown
 get_os() {
-  if $(check_alpine); then
+  if ! $(check_not_alpine); then
     echo "alpine"
-  elif [ "$(uname)" == "Darwin" ]; then
+  elif [ "$(uname)" = "Darwin" ]; then
     echo "macos"
-  elif [ "$(uname)" == "Linux" ]; then
+  elif [ "$(uname)" = "Linux" ]; then
     echo "linux"
   else
     echo "unknown"
@@ -47,9 +48,9 @@ get_os() {
 # Get CPU arch, or unknown
 get_arch() {
   MACHINE=$(uname -m)
-  if [ "$MACHINE" == "aarch64" ]; then
+  if [ "$MACHINE" = "aarch64" ]; then
     echo "arm64"
-  elif [ "$MACHINE" == "x86_64" ]; then
+  elif [ "$MACHINE" = "x86_64" ]; then
     echo "x64"
   else
     echo "unknown"
@@ -95,14 +96,14 @@ fetch_release() {
 pack_install() {
   # Check for OS and display an error if it's not supported
   OS=$(get_os)
-  if [ "$OS" == "unknown" ]; then
+  if [ "$OS" = "unknown" ]; then
     echo "$UNSUPPORTED_CPU"
     exit 1
   fi
 
   # Check for CPU arch and display an error if it's not supported
   ARCH=$(get_arch)
-  if [ "$ARCH" == "unknown" ]; then
+  if [ "$ARCH" = "unknown" ]; then
     echo "$UNSUPPORTED_OS"
     exit 1
   fi
