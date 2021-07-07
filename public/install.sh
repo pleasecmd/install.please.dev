@@ -91,8 +91,11 @@ npm_install() {
 # Fetch release from GitHub
 fetch_release() {
   URL=$1
-  curl -L -s "$URL" -o /usr/bin/local/please 2>&1 > /dev/null
-  return $?
+  mkdir -p ~/.please
+  curl -L -s "$URL" -o ~/.please/please 2>&1 > /dev/null
+  RESULT=$?
+  mv ~/.please/please /usr/local/bin/please
+  return $RESULT
 }
 
 # Install the latest please pack from GitHub
