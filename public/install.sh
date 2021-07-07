@@ -72,11 +72,13 @@ spinner() {
       printf "${CL}"
       break
     }
-    i=0
-    while ! [ "$i" = "9" ]; do
-      i=$(($i+1))
+    INDEX=0
+    while ! [ "$INDEX" = "9" ]; do
+      INDEX=$(($INDEX+1))
+      CUT_AT=$(($INDEX*3))
       sleep 0.05
-      printf "${CL}${SPINNER:$i:1} ${msg}\r"
+      FRAME=$(echo "$SPINNER" | head -c $CUT_AT | tail -c 3)
+      printf "${CL}${FRAME} ${msg}\r"
     done
   done
 }
@@ -110,17 +112,17 @@ pack_install() {
 
   # Get the latest release name from GitHub, display an error on failure
   LATEST=$(curl -s $GH_RELEASES | grep tag_name | head -1 | cut -d '"' -f 4 | tr -d v)
-  FAILED=$?
-  if [ $FAILED ]; then
+  RETCODE=$?
+  if ! [ "$RETCODE" = "0" ]; then
     echo $NO_RELEASE
     exit
   fi
 
   # Download the latest release from GitHub, display an error on failure
   URL="https://get.please.dev/$LATEST/$OS/$ARCH"
-  fetch_payload "$URL" & spinner "$FETCHING"
-  FAILED=$?
-  if [ $FAILED ]; then
+  fetch_release "$URL" & spinner "$FETCHING"
+  RETCODE=$?
+  if [ "$RETCODE" = "0" ]; then
     echo $CANNOT_FETCH
     exit 1
   fi
